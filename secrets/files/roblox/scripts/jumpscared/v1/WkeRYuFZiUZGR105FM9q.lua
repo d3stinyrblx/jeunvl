@@ -64,76 +64,38 @@ Footer.TextScaled = true
 Footer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 Footer.BorderColor3 = Color3.fromRGB(0, 255, 0)
 Footer.BorderSizePixel = 2
-Footer.TextColor3 = Color3.fromRGB(200, 200, 200)
+Footer.TextColor3 = Color3.fromRGB(255, 255, 255)
 Footer.Font = Enum.Font.Gotham
 local CornerFooter = Instance.new("UICorner", Footer)
 CornerFooter.CornerRadius = UDim.new(0, 8)
 
-local MinimizeButton = Instance.new("TextButton", Frame)
-MinimizeButton.Text = "-"
-MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
-MinimizeButton.Position = UDim2.new(1, -35, 0, 5)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-MinimizeButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
-MinimizeButton.BorderSizePixel = 2
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizeButton.Font = Enum.Font.GothamBold
-local CornerMinimize = Instance.new("UICorner", MinimizeButton)
-CornerMinimize.CornerRadius = UDim.new(0, 8)
-
-local MiniFrame = Instance.new("Frame", ScreenGui)
-MiniFrame.Size = UDim2.new(0, 50, 0, 50)
-MiniFrame.Position = UDim2.new(0.9, 0, 0.1, 0)
-MiniFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MiniFrame.BorderColor3 = Color3.fromRGB(0, 255, 0)
-MiniFrame.BorderSizePixel = 3
-MiniFrame.Visible = false
-MiniFrame.Active = true
-MiniFrame.Draggable = true
-local CornerMiniFrame = Instance.new("UICorner", MiniFrame)
-CornerMiniFrame.CornerRadius = UDim.new(0, 8)
-
-local ExpandButton = Instance.new("TextButton", MiniFrame)
-ExpandButton.Text = "+"
-ExpandButton.Size = UDim2.new(0, 30, 0, 30)
-ExpandButton.Position = UDim2.new(0.5, -15, 0, 5)
-ExpandButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-ExpandButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
-ExpandButton.BorderSizePixel = 2
-ExpandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ExpandButton.Font = Enum.Font.GothamBold
-local CornerExpand = Instance.new("UICorner", ExpandButton)
-CornerExpand.CornerRadius = UDim.new(0, 8)
-
 local JumpscareImage = Instance.new("ImageLabel", ScreenGui)
 JumpscareImage.Size = UDim2.new(1, 0, 1, 0)
 JumpscareImage.Position = UDim2.new(0, 0, 0, 0)
-JumpscareImage.BackgroundTransparency = 1
-JumpscareImage.Image = "rbxassetid://7255938910" -- Replace with the jumpscare image asset ID
+JumpscareImage.Image = "rbxassetid://7255938910"
 JumpscareImage.Visible = false
 
 SubmitButton.MouseButton1Click:Connect(function()
-	local userName = InputBox.Text
-	local targetPlayer = Players:FindFirstChild(userName)
-	if targetPlayer then
-		JumpscareImage.Visible = true
-		wait(2)
-		JumpscareImage.Visible = false
-		targetPlayer.Character:BreakJoints() -- Makes the target die
-		LocalPlayer.Character:BreakJoints() -- Makes you die
-		wait(2)
-		-- respawn both players
-		LocalPlayer:LoadCharacter()
-		targetPlayer:LoadCharacter()
-	end
-end)
+    local targetPlayerName = InputBox.Text
+    local targetPlayer = Players:FindFirstChild(targetPlayerName)
+    
+    if targetPlayer then
+        local targetCharacter = targetPlayer.Character
+        if targetCharacter then
+            local targetHumanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
+            if targetHumanoid then
+                JumpscareImage.Visible = true
+                Camera.CameraType = Enum.CameraType.Scriptable
+                Camera.CFrame = CFrame.new(targetCharacter.PrimaryPart.Position + Vector3.new(0, 5, 0))
+                wait(2)
+                JumpscareImage.Visible = false
+                Camera.CameraType = Enum.CameraType.Custom
+                targetHumanoid.Health = 0
+                targetPlayer:LoadCharacter()
+            end
+        end
+    end
 
-MinimizeButton.MouseButton1Click:Connect(function()
-	Frame.Visible = false
-	MiniFrame.Visible = true
-end)
-
-ExpandButton.MouseButton1Click:Connect(function()
-	Frame.Visible = true
-	MiniFrame.Visible = false
+    LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health = 0
+    LocalPlayer:LoadCharacter()
 end)

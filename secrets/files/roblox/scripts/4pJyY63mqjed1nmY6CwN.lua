@@ -1,80 +1,85 @@
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
-
-if UserInputService.GamepadEnabled then
-    return
-end
-
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "KickUI"
 screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0.6, 0, 0.4, 0)
-frame.Position = UDim2.new(0.2, 0, 0.3, 0)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.Parent = screenGui
+frame.Size = UDim2.new(0, 300, 0, 250)
+frame.Position = UDim2.new(0.5, -150, 0.5, -125)
+frame.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+frame.BorderSizePixel = 2
+frame.BorderColor3 = Color3.fromRGB(0, 200, 0)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Draggable = true
 
-local textBox = Instance.new("TextBox")
-textBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-textBox.Position = UDim2.new(0.1, 0, 0.1, 0)
-textBox.PlaceholderText = "Enter Username"
-textBox.Parent = frame
+local title = Instance.new("TextLabel")
+title.Parent = frame
+title.Size = UDim2.new(1, 0, 0.2, 0)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Kicker UI"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 24
+title.BackgroundTransparency = 1
+title.TextStrokeTransparency = 0.5
+title.Font = Enum.Font.SourceSansBold
+title.TextAlign = Enum.TextAlign.Center
 
-local reasonBox = Instance.new("TextBox")
-reasonBox.Size = UDim2.new(0.8, 0, 0.2, 0)
-reasonBox.Position = UDim2.new(0.1, 0, 0.4, 0)
-reasonBox.PlaceholderText = "Enter Reason"
-reasonBox.Parent = frame
+local playerList = Instance.new("TextBox")
+playerList.Parent = frame
+playerList.Size = UDim2.new(1, -20, 0.3, 0)
+playerList.Position = UDim2.new(0, 10, 0.2, 0)
+playerList.PlaceholderText = "Enter username"
+playerList.TextColor3 = Color3.fromRGB(0, 0, 0)
+playerList.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+playerList.BorderSizePixel = 2
+playerList.BorderColor3 = Color3.fromRGB(0, 200, 0)
+playerList.Font = Enum.Font.SourceSans
+playerList.TextSize = 18
 
 local kickButton = Instance.new("TextButton")
-kickButton.Size = UDim2.new(0.8, 0, 0.2, 0)
-kickButton.Position = UDim2.new(0.1, 0, 0.7, 0)
-kickButton.Text = "Kick Player"
 kickButton.Parent = frame
+kickButton.Size = UDim2.new(1, -20, 0.3, 0)
+kickButton.Position = UDim2.new(0, 10, 0.6, 0)
+kickButton.Text = "Kick Player"
+kickButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+kickButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+kickButton.TextSize = 20
+kickButton.Font = Enum.Font.SourceSansBold
+kickButton.BorderSizePixel = 2
+kickButton.BorderColor3 = Color3.fromRGB(0, 200, 0)
+kickButton.TextStrokeTransparency = 0.5
 
-local RemoteEvent = ReplicatedStorage:FindFirstChild("KickPlayerEvent") or Instance.new("RemoteEvent")
-RemoteEvent.Name = "KickPlayerEvent"
-RemoteEvent.Parent = ReplicatedStorage
+local footer = Instance.new("TextLabel")
+footer.Parent = frame
+footer.Size = UDim2.new(1, 0, 0.2, 0)
+footer.Position = UDim2.new(0, 0, 0.8, 0)
+footer.Text = "Created By: Jeunvl <3"
+footer.TextColor3 = Color3.fromRGB(255, 255, 255)
+footer.TextSize = 14
+footer.BackgroundTransparency = 1
+footer.TextStrokeTransparency = 0.5
+footer.Font = Enum.Font.SourceSans
+footer.TextAlign = Enum.TextAlign.Center
+
+local function kickPlayer()
+    local playerName = playerList.Text
+    if playerName ~= "" then
+        local playerToKick = game.Players:FindFirstChild(playerName)
+        if playerToKick then
+            if playerToKick.UserId ~= game.Players.LocalPlayer.UserId then
+                playerToKick:Kick("You have been kicked from the game.")
+            else
+                print("You cannot kick yourself!")
+                playerList.Text = ""
+            end
+        else
+            print("Player not found.")
+        end
+    end
+end
 
 kickButton.MouseButton1Click:Connect(function()
-    local playerName = textBox.Text
-    local reason = reasonBox.Text
-    if playerName ~= "" and reason ~= "" then
-        RemoteEvent:FireServer(playerName, reason)
-    end
+    kickPlayer()
 end)
 
-RemoteEvent.OnServerEvent:Connect(function(player, targetName, reason)
-    local target = Players:FindFirstChild(targetName)
-    if target then
-        target:Kick("You have been kicked from the server. Reason: " .. reason)
-    end
-end)
-
-local dragging = false
-local dragStart = nil
-local startPos = nil
-
-frame.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = frame.Position
-    end
-end)
-
-frame.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
-end)
-
-frame.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-end)
+frame:TweenSize(UDim2.new(0, 300, 0, 250), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.5, true)
+frame.Position = UDim2.new(0.5, -150, 0.5, -125)

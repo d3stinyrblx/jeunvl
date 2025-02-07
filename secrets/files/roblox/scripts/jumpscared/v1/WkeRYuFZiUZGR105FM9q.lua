@@ -14,6 +14,8 @@ Frame.BorderColor3 = Color3.fromRGB(0, 255, 0)
 Frame.BorderSizePixel = 3
 Frame.Active = true
 Frame.Draggable = true
+local Corner = Instance.new("UICorner", Frame)
+Corner.CornerRadius = UDim.new(0, 16)
 
 local Title = Instance.new("TextLabel", Frame)
 Title.Text = "OH NOES"
@@ -24,8 +26,11 @@ Title.BorderColor3 = Color3.fromRGB(0, 255, 0)
 Title.BorderSizePixel = 2
 Title.TextColor3 = Color3.fromRGB(255, 0, 0)
 Title.Font = Enum.Font.FredokaOne
+local CornerTitle = Instance.new("UICorner", Title)
+CornerTitle.CornerRadius = UDim.new(0, 16)
 
 local InputBox = Instance.new("TextBox", Frame)
+InputBox.Name = "tank u"
 InputBox.PlaceholderText = "Enter Username"
 InputBox.Size = UDim2.new(1, -20, 0, 30)
 InputBox.Position = UDim2.new(0, 10, 0, 50)
@@ -35,6 +40,8 @@ InputBox.BorderColor3 = Color3.fromRGB(0, 255, 0)
 InputBox.BorderSizePixel = 2
 InputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 InputBox.Font = Enum.Font.Gotham
+local CornerInput = Instance.new("UICorner", InputBox)
+CornerInput.CornerRadius = UDim.new(0, 8)
 
 local SubmitButton = Instance.new("TextButton", Frame)
 SubmitButton.Text = "Submit"
@@ -46,6 +53,8 @@ SubmitButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
 SubmitButton.BorderSizePixel = 2
 SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 SubmitButton.Font = Enum.Font.GothamBold
+local CornerSubmit = Instance.new("UICorner", SubmitButton)
+CornerSubmit.CornerRadius = UDim.new(0, 8)
 
 local Footer = Instance.new("TextLabel", Frame)
 Footer.Text = "Get jumpscared by: Jeunvl"
@@ -57,6 +66,8 @@ Footer.BorderColor3 = Color3.fromRGB(0, 255, 0)
 Footer.BorderSizePixel = 2
 Footer.TextColor3 = Color3.fromRGB(200, 200, 200)
 Footer.Font = Enum.Font.Gotham
+local CornerFooter = Instance.new("UICorner", Footer)
+CornerFooter.CornerRadius = UDim.new(0, 8)
 
 local MinimizeButton = Instance.new("TextButton", Frame)
 MinimizeButton.Text = "-"
@@ -67,6 +78,8 @@ MinimizeButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
 MinimizeButton.BorderSizePixel = 2
 MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeButton.Font = Enum.Font.GothamBold
+local CornerMinimize = Instance.new("UICorner", MinimizeButton)
+CornerMinimize.CornerRadius = UDim.new(0, 8)
 
 local MiniFrame = Instance.new("Frame", ScreenGui)
 MiniFrame.Size = UDim2.new(0, 50, 0, 50)
@@ -77,74 +90,50 @@ MiniFrame.BorderSizePixel = 3
 MiniFrame.Visible = false
 MiniFrame.Active = true
 MiniFrame.Draggable = true
+local CornerMiniFrame = Instance.new("UICorner", MiniFrame)
+CornerMiniFrame.CornerRadius = UDim.new(0, 8)
 
 local ExpandButton = Instance.new("TextButton", MiniFrame)
-ExpandButton.Text = "J"
-ExpandButton.Size = UDim2.new(1, 0, 1, 0)
-ExpandButton.TextScaled = true
-ExpandButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ExpandButton.Text = "+"
+ExpandButton.Size = UDim2.new(0, 30, 0, 30)
+ExpandButton.Position = UDim2.new(0.5, -15, 0, 5)
+ExpandButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 ExpandButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
 ExpandButton.BorderSizePixel = 2
 ExpandButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ExpandButton.Font = Enum.Font.GothamBold
+local CornerExpand = Instance.new("UICorner", ExpandButton)
+CornerExpand.CornerRadius = UDim.new(0, 8)
+
+local JumpscareImage = Instance.new("ImageLabel", ScreenGui)
+JumpscareImage.Size = UDim2.new(1, 0, 1, 0)
+JumpscareImage.Position = UDim2.new(0, 0, 0, 0)
+JumpscareImage.BackgroundTransparency = 1
+JumpscareImage.Image = "rbxassetid://7255938910" -- Replace with the jumpscare image asset ID
+JumpscareImage.Visible = false
+
+SubmitButton.MouseButton1Click:Connect(function()
+	local userName = InputBox.Text
+	local targetPlayer = Players:FindFirstChild(userName)
+	if targetPlayer then
+		JumpscareImage.Visible = true
+		wait(2)
+		JumpscareImage.Visible = false
+		targetPlayer.Character:BreakJoints() -- Makes the target die
+		LocalPlayer.Character:BreakJoints() -- Makes you die
+		wait(2)
+		-- respawn both players
+		LocalPlayer:LoadCharacter()
+		targetPlayer:LoadCharacter()
+	end
+end)
 
 MinimizeButton.MouseButton1Click:Connect(function()
-    Frame.Visible = false
-    MiniFrame.Visible = true
+	Frame.Visible = false
+	MiniFrame.Visible = true
 end)
 
 ExpandButton.MouseButton1Click:Connect(function()
-    Frame.Visible = true
-    MiniFrame.Visible = false
-end)
-
-local function FindPlayer(name)
-    for _, player in pairs(Players:GetPlayers()) do
-        if string.lower(player.Name) == string.lower(name) then
-            return player
-        end
-    end
-    return nil
-end
-
-local function Jumpscare(target)
-    if target and target.Character then
-        local targetPlayer = target
-        local targetCharacter = targetPlayer.Character
-        local targetHumanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
-
-        if targetHumanoid then
-            targetHumanoid.CameraOffset = Vector3.new(0, 0, 0)
-            targetHumanoid.WalkSpeed = 0
-            Camera.CameraSubject = targetHumanoid
-        end
-
-        local ScareGui = Instance.new("ScreenGui", targetPlayer:WaitForChild("PlayerGui"))
-        local ScareFrame = Instance.new("Frame", ScareGui)
-        ScareFrame.Size = UDim2.new(1, 0, 1, 0)
-        ScareFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-
-        local ScareImage = Instance.new("ImageLabel", ScareFrame)
-        ScareImage.Size = UDim2.new(1, 0, 1, 0)
-        ScareImage.Image = "rbxassetid://1234567890" 
-        ScareImage.BackgroundTransparency = 1
-
-        task.wait(2)
-        ScareGui:Destroy()
-        targetHumanoid.WalkSpeed = 16
-
-        targetCharacter:BreakJoints()
-        task.wait(1)
-        targetPlayer:LoadCharacter()
-    end
-end
-
-SubmitButton.MouseButton1Click:Connect(function()
-    local username = InputBox.Text
-    if username ~= "" then
-        local TargetPlayer = FindPlayer(username)
-        if TargetPlayer then
-            Jumpscare(TargetPlayer)
-        end
-    end
+	Frame.Visible = true
+	MiniFrame.Visible = false
 end)

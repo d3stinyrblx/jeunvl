@@ -1,59 +1,58 @@
 local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local userInputService = game:GetService("UserInputService")
-local ragdollButton = Instance.new("TextButton")
-local ragdolled = false
+local UserInputService = game:GetService("UserInputService")
 
-local function ragdoll()
-    if not ragdolled then
-        for _, part in pairs(character:GetChildren()) do
-            if part:IsA("BasePart") then
-                local bodyVelocity = Instance.new("BodyVelocity")
-                bodyVelocity.MaxForce = Vector3.new(100000, 100000, 100000)
-                bodyVelocity.Velocity = Vector3.new(math.random(), math.random(), math.random()) * 100
-                bodyVelocity.Parent = part
+local function ragdollCharacter(character)
+    if character and character:FindFirstChild("Humanoid") then
+        local humanoid = character.Humanoid
+        humanoid.PlatformStand = true
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("Motor6D") then
+                part:Destroy()
             end
         end
-        ragdolled = true
-        ragdollButton.Text = "Unragdoll"
     end
 end
 
-local function unragdoll()
-    if ragdolled then
-        for _, part in pairs(character:GetChildren()) do
-            if part:IsA("BasePart") then
-                for _, object in pairs(part:GetChildren()) do
-                    if object:IsA("BodyVelocity") then
-                        object:Destroy()
-                    end
-                end
-            end
-        end
-        ragdolled = false
-        ragdollButton.Text = "Ragdoll"
+local function unRagdollCharacter(character)
+    if character and character:FindFirstChild("Humanoid") then
+        local humanoid = character.Humanoid
+        humanoid.PlatformStand = false
     end
 end
 
-ragdollButton.Size = UDim2.new(0, 150, 0, 50)
-ragdollButton.Position = UDim2.new(0.5, -75, 0.9, -25)
-ragdollButton.Text = "Ragdoll"
-ragdollButton.Parent = player.PlayerGui:WaitForChild("ScreenGui")
+if UserInputService.TouchEnabled then
+    local mobileButton = Instance.new("TextButton")
+    mobileButton.Size = UDim2.new(0, 100, 0, 100)
+    mobileButton.Position = UDim2.new(0.5, -50, 0.8, -50)
+    mobileButton.Text = ""
+    mobileButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    mobileButton.BorderRadius = UDim.new(0, 50)
+    mobileButton.Parent = player.PlayerGui:WaitForChild("ScreenGui")
 
-ragdollButton.MouseButton1Click:Connect(function()
-    if ragdolled then
-        unragdoll()
-    else
-        ragdoll()
-    end
-end)
+    mobileButton.MouseButton1Click:Connect(function()
+        if player.Character then
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+            if humanoid.PlatformStand then
+                unRagdollCharacter(player.Character)
+            else
+                ragdollCharacter(player.Character)
+            end
+        end
+    end)
+end
 
-userInputService.InputBegan:Connect(function(input, gameProcessed)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
 
-    if input.KeyCode == Enum.KeyCode.S and userInputService:IsKeyDown(Enum.KeyCode.R) then
-        ragdoll()
-    elseif input.KeyCode == Enum.KeyCode.S and userInputService:IsKeyDown(Enum.KeyCode.U) then
-        unragdoll()
+    if input.KeyCode == Enum.KeyCode.R then
+        if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+            if player.Character then
+                ragdollCharacter(player.Character)
+            end
+        elseif UserInputService:IsKeyDown(Enum.KeyCode.S) then
+            if player.Character then
+                unRagdollCharacter(player.Character)
+            end
+        end
     end
 end)

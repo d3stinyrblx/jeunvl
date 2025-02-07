@@ -1,9 +1,9 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterGui = game:GetService("StarterGui")
+local InsertService = game:GetService("InsertService")
 
 local function giveSword(player)
-    local sword = game:GetService("InsertService"):LoadAsset(422024417):FindFirstChildOfClass("Tool")
+    local sword = InsertService:LoadAsset(422024417):FindFirstChildOfClass("Tool")
 
     if sword then
         sword.Parent = player.Backpack
@@ -20,13 +20,15 @@ local function giveSword(player)
     end
 end
 
-ReplicatedStorage.DefaultChatSystemChatEvents.OnMessageReceived.OnServerEvent:Connect(function(player, message)
-    if message:lower() == "i had the power" then
-        giveSword(player)
-        StarterGui:SetCore("SendNotification", {
-            Title = "Sword Given";
-            Text = "You have received the power!";
-            Duration = 3;
-        })
-    end
+Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        if message:lower() == "i had the power" then
+            giveSword(player)
+            StarterGui:SetCore("SendNotification", {
+                Title = "Sword Given";
+                Text = "You have received the power!";
+                Duration = 3;
+            })
+        end
+    end)
 end)

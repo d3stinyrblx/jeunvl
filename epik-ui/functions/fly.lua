@@ -11,7 +11,7 @@ StarterGui:SetCore("OnScreenKeyboardMode", Enum.OnScreenKeyboardMode.Dynamic)
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "FlyUI"
-screenGui.Parent = game.CoreGui
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame", screenGui)
 frame.Size = UDim2.new(0.25, 0, 0.15, 0)

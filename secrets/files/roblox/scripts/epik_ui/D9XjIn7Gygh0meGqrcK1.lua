@@ -12,7 +12,7 @@ local uiSize = isMobile and UDim2.new(0, 280, 0, 380) or UDim2.new(0, 340, 0, 48
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = uiSize
-mainFrame.Position = UDim2.new(0.5, -mainFrame.Size.X.Offset / 2, 0.3, 0)
+mainFrame.Position = UDim2.new(0.5, -uiSize.X.Offset / 2, 0.3, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 mainFrame.BackgroundTransparency = 0.05
 mainFrame.BorderSizePixel = 0
@@ -33,13 +33,6 @@ titleBar.Size = UDim2.new(1, 0, 0, 40)
 titleBar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 titleBar.Parent = mainFrame
 
-local uiCornerTitle = Instance.new("UICorner", titleBar)
-uiCornerTitle.CornerRadius = UDim.new(0, 15)
-
-local uiStrokeTitle = Instance.new("UIStroke", titleBar)
-uiStrokeTitle.Thickness = 2
-uiStrokeTitle.Color = Color3.fromRGB(180, 180, 180)
-
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Text = "Jeunvl's Epik UI"
 titleLabel.Size = UDim2.new(1, 0, 1, 0)
@@ -58,20 +51,14 @@ minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimizeButton.TextScaled = true
 minimizeButton.Parent = titleBar
 
-local uiCornerMinimize = Instance.new("UICorner", minimizeButton)
-uiCornerMinimize.CornerRadius = UDim.new(0, 10)
-
-local uiStrokeMinimize = Instance.new("UIStroke", minimizeButton)
-uiStrokeMinimize.Thickness = 2
-uiStrokeMinimize.Color = Color3.fromRGB(150, 150, 150)
-
 local minimizedIcon = Instance.new("TextButton")
 minimizedIcon.Size = UDim2.new(0, 50, 0, 50)
-minimizedIcon.Position = mainFrame.Position
-minimizedIcon.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+minimizedIcon.Position = UDim2.new(0.05, 0, 0.9, 0) -- Bottom left
+minimizedIcon.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 minimizedIcon.Text = "J"
-minimizedIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizedIcon.TextColor3 = Color3.fromRGB(200, 200, 200)
 minimizedIcon.TextScaled = true
+minimizedIcon.Font = Enum.Font.GothamBold
 minimizedIcon.Parent = screenGui
 minimizedIcon.Visible = false
 minimizedIcon.Draggable = true
@@ -84,6 +71,7 @@ local uiStrokeIcon = Instance.new("UIStroke", minimizedIcon)
 uiStrokeIcon.Thickness = 2
 uiStrokeIcon.Color = Color3.fromRGB(255, 255, 255)
 
+-- Smooth Animations
 local isMinimized = false
 minimizeButton.MouseButton1Click:Connect(function()
     if isMinimized then
@@ -112,10 +100,6 @@ scrollingFrame.CanvasSize = UDim2.new(0, 0, 2, 0)
 scrollingFrame.ScrollBarThickness = 5
 scrollingFrame.Parent = mainFrame
 
-local uiStrokeScroll = Instance.new("UIStroke", scrollingFrame)
-uiStrokeScroll.Thickness = 2
-uiStrokeScroll.Color = Color3.fromRGB(200, 200, 200)
-
 local function createButton(text, parent, callback)
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -10, 0, 40)
@@ -129,10 +113,6 @@ local function createButton(text, parent, callback)
 
     local corner = Instance.new("UICorner", button)
     corner.CornerRadius = UDim.new(0, 10)
-
-    local stroke = Instance.new("UIStroke", button)
-    stroke.Thickness = 2
-    stroke.Color = Color3.fromRGB(180, 180, 180)
 
     button.MouseButton1Click:Connect(callback)
     return button
@@ -155,13 +135,6 @@ for _, category in ipairs(categories) do
     catLabel.TextScaled = true
     catLabel.Font = Enum.Font.GothamBold
     catLabel.Parent = scrollingFrame
-
-    local corner = Instance.new("UICorner", catLabel)
-    corner.CornerRadius = UDim.new(0, 10)
-
-    local stroke = Instance.new("UIStroke", catLabel)
-    stroke.Thickness = 2
-    stroke.Color = Color3.fromRGB(200, 200, 200)
 
     scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, scrollingFrame.CanvasSize.Y.Offset + 35)
 
